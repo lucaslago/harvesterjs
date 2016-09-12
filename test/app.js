@@ -36,7 +36,8 @@ function configureApp(harvesterApp) {
         links: {
             owner: 'person',
             food: 'foobar'
-        }
+        },
+        adopted: Joi.date()
     })
 
     .resource('collar', {
@@ -81,6 +82,11 @@ function configureApp(harvesterApp) {
         name: Joi.string().description('name')
     })
     .readOnly()
+
+    .resource('restrict', {
+        name: Joi.string().description('name')
+    })
+    .restricted()
 
     .resource('immutable', {
         name: Joi.string().description('name')

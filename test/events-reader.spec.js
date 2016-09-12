@@ -67,7 +67,7 @@ describe('onChange callback, event capture and at-least-once delivery semantics'
                         post: 'post'
                     }
                 })
-                .onChange({insert: reportAbusiveLanguage, update: reportAbusiveLanguage})
+                .onChange({insert: {func:reportAbusiveLanguage}, update: reportAbusiveLanguage})
                 .resource('pet', {
                     body: Joi.string()
                 })
@@ -188,13 +188,14 @@ describe('onChange callback, event capture and at-least-once delivery semantics'
         });
 
         afterEach(function (done) {
-            this.eventsReader.stop()
-                .then(function () {
-                    done();
-                })
-                .catch(function (err) {
-                    done(err);
-                });
+            var that = this;
+            Promise.delay(1000).then(function () {
+                that.eventsReader.stop()
+                    .then(function () {
+                        done();
+                    })
+                    .catch(done);
+            });
         });
 
         describe('When a new post is added', function () {
