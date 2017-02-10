@@ -36,7 +36,7 @@ var createReportResponseDfd;
 
 // todo checkpoints, todo check skipping
 
-describe('onChange callback, event capture and at-least-once delivery semantics', function () {
+describe.only('onChange callback, event capture and at-least-once delivery semantics', function () {
 
     var harvesterApp;
     var petOnInsertHandler;
@@ -397,5 +397,3 @@ describe('onChange callback, event capture and at-least-once delivery semantics'
             });
     }
 });
-
-
