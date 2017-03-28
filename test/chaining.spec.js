@@ -25,7 +25,7 @@ describe('chaining', function () {
                 }
             });
 
-            ['get', 'post', 'put', 'delete', 'patch', 'getById', 'putById', 'deleteById', 'patchById', 'getChangeEventsStreaming'
+            ['get', 'post', 'put', 'delete', 'getById', 'putById', 'deleteById', 'getChangeEventsStreaming'
             ].forEach(function (httpMethod) {
                     should.exist(plant[httpMethod]().before);
                     should.exist(plant[httpMethod]().after);

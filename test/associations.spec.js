@@ -45,22 +45,6 @@ describe('associations', function () {
                     done();
                 });
             });
-
-        it('should be able to dissociate', function (done) {
-            request(config.baseUrl)
-                .patch('/people/' + ids.people[0])
-                .send([
-                    {path: '/people/0/links/pets', op: 'replace', value: []}
-                ])
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end(function (error, response) {
-                    should.not.exist(error);
-                    var body = JSON.parse(response.text);
-                    should.not.exist(body.people[0].links);
-                    done();
-                });
-        });
     });
 
     describe('one to many association', function () {
@@ -86,21 +70,6 @@ describe('associations', function () {
                     should.not.exist(error);
                     var body = JSON.parse(response.text);
                     should.equal(body.pets[0].links.owner, ids.people[0]);
-                    done();
-                });
-        });
-        it('should be able to dissociate', function (done) {
-            request(config.baseUrl)
-                .patch('/pets/' + ids.pets[0])
-                .send([
-                    {path: '/pets/0/links/owner', op: 'replace', value: null}
-                ])
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end(function (error, response) {
-                    should.not.exist(error);
-                    var body = JSON.parse(response.text);
-                    should.not.exist(body.pets[0].links);
                     done();
                 });
         });
@@ -132,21 +101,6 @@ describe('associations', function () {
                     done();
                 });
         });
-        it('should be able to dissociate', function (done) {
-            request(config.baseUrl)
-                .patch('/people/' + ids.people[0])
-                .send([
-                    {path: '/people/0/links/soulmate', op: 'replace', value: null}
-                ])
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end(function (error, response) {
-                    should.not.exist(error);
-                    var body = JSON.parse(response.text);
-                    should.not.exist(body.people[0].links);
-                    done();
-                });
-        });
     });
 
     describe('many to many association', function () {
@@ -172,21 +126,6 @@ describe('associations', function () {
                     should.not.exist(error);
                     var body = JSON.parse(response.text);
                     (body.people[0].links.lovers).should.containEql(ids.people[1]);
-                    done();
-                });
-        });
-        it('should be able to dissociate', function (done) {
-            request(config.baseUrl)
-                .patch('/people/' + ids.people[0])
-                .send([
-                    {path: '/people/0/links/lovers', op: 'replace', value: []}
-                ])
-                .expect('Content-Type', /json/)
-                .expect(200)
-                .end(function (error, response) {
-                    should.not.exist(error);
-                    var body = JSON.parse(response.text);
-                    should.not.exist(body.people[0].links);
                     done();
                 });
         });
