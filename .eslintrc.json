@@ -4,6 +4,7 @@
 	"rules": {
 		"node/exports-style": ["error", "module.exports"],
 		"semi": 2,
+		"indent": ["error", 2],
 		"no-console": 0,
 		"node/no-unpublished-require": ["error", {
 			"allowModules": [

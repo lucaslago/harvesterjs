@@ -9,7 +9,7 @@ let mongodbHostname;
 if (dockerHostURL) {
   mongodbHostname = require('url').parse(dockerHostURL).hostname;
 }
- else {
+else {
     // fallback if Mongodb is being run from the host machine
   mongodbHostname = '127.0.0.1';
 }
@@ -41,8 +41,8 @@ let $http = require('http-as-promised');
 
 let sepultura = {
   artists: [{
-      name: 'Sepultura'
-    }],
+    name: 'Sepultura'
+  }],
 };
 
 // wait a bit for the event stream to open before posting the artist

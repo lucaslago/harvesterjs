@@ -11,41 +11,41 @@ let config = require('./config.js');
 
 function configureApp(harvesterApp) {
   harvesterApp.resource('person', {
-      name: Joi.string().required().description('name'),
-      nickname: Joi.string().description('nickname'),
-      appearances: Joi.number().required().description('appearances'),
-      links: {
-          pets: ['pet'],
-          soulmate: {ref: 'person', inverse: 'soulmate'},
-          lovers: [
+    name: Joi.string().required().description('name'),
+    nickname: Joi.string().description('nickname'),
+    appearances: Joi.number().required().description('appearances'),
+    links: {
+      pets: ['pet'],
+      soulmate: {ref: 'person', inverse: 'soulmate'},
+      lovers: [
                 {ref: 'person', inverse: 'lovers'},
-            ],
-        },
-    })
+      ],
+    },
+  })
 
     .resource('vehicle', {
       name: Joi.string(),
       links: {
-          owners: [
+        owners: [
                 {ref: 'person'},
-            ],
-        },
+        ],
+      },
     })
 
     .resource('pet', {
       name: Joi.string().required().description('name'),
       appearances: Joi.number().required().description('appearances'),
       links: {
-          owner: 'person',
-          food: 'foobar',
-        },
+        owner: 'person',
+        food: 'foobar',
+      },
       adopted: Joi.date(),
     })
 
     .resource('collar', {
       links: {
-          collarOwner: 'pet',
-        },
+        collarOwner: 'pet',
+      },
     })
 
     .resource('cat', {
@@ -63,23 +63,23 @@ function configureApp(harvesterApp) {
 
       if (foobar.foo && foobar.foo === 'bar') {
             // promise
-          return new Promise(function(resolve, reject) {
-              reject(new JSONAPI_Error({
-                  status: 400,
-                  detail: 'Foo was bar',
-                }));
-            });
-        }
- else if (foobar.foo && foobar.foo === 'baz') {
+        return new Promise(function(resolve, reject) {
+          reject(new JSONAPI_Error({
+            status: 400,
+            detail: 'Foo was bar',
+          }));
+        });
+      }
+      else if (foobar.foo && foobar.foo === 'baz') {
             // non-promise
-          throw new JSONAPI_Error({
-              status: 400,
-              detail: 'Foo was baz',
-            });
-        }
- else {
-          return foobar;
-        }
+        throw new JSONAPI_Error({
+          status: 400,
+          detail: 'Foo was baz',
+        });
+      }
+      else {
+        return foobar;
+      }
     })
 
     .resource('readers', {
@@ -99,21 +99,21 @@ function configureApp(harvesterApp) {
 
     .resource('object', {
       foo: Joi.object().required().keys({
-          bar: Joi.string(),
-          tab: Joi.object().keys({
-              bats: Joi.array(),
-            }),
-          any: Joi.any(),
+        bar: Joi.string(),
+        tab: Joi.object().keys({
+          bats: Joi.array(),
         }),
+        any: Joi.any(),
+      }),
     });
 
   harvesterApp.router.get('/random-error', function(req, res, next) {
-      next(new Error('this is an error'));
-    });
+    next(new Error('this is an error'));
+  });
 
   harvesterApp.router.get('/json-errors-error', function(req, res, next) {
-      next(new JSONAPI_Error({status: 400, detail: 'Bar was not foo'}));
-    });
+    next(new JSONAPI_Error({status: 400, detail: 'Bar was not foo'}));
+  });
 
   return harvesterApp;
 }
