@@ -1,3 +1,4 @@
+'use strict';
 let harvester = require('../lib/harvester');
 let JSONAPI_Error = harvester.JSONAPI_Error;
 
@@ -57,7 +58,7 @@ function configureApp(harvesterApp) {
       foo: Joi.string().required().description('name'),
     })
 
-    .before(function(req, res) {
+    .before(function() {
       var foobar = this;
 
       if (foobar.foo && foobar.foo === 'bar') {

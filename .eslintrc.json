@@ -4,8 +4,20 @@
 	"rules": {
 		"node/exports-style": ["error", "module.exports"],
 		"semi": 2,
+		"no-console": 0,
 		"node/no-unpublished-require": ["error", {
-			"allowModules": ["supertest", "should", "chai", "chai-http", "agco-event-source-stream", "before"],
+			"allowModules": [
+				"supertest",
+				"should",
+				"chai",
+				"chai-http",
+				"agco-event-source-stream",
+				"before",
+				"sinon",
+				"nock",
+				"request-debug",
+				"profanity-util"
+			],
 			"tryExtensions": [".js", ".json", ".node"]
 		}]
 	},
@@ -15,7 +27,9 @@
 		"it": true,
 		"expect": true,
 		"beforeEach": true,
+		"afterEach": true,
 		"supertest": true,
+		"context": true,
 		"chai": true
 	}
 }

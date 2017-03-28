@@ -1,3 +1,4 @@
+'use strict';
 let Joi = require('joi');
 let expect = require('chai').expect;
 

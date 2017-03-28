@@ -1,3 +1,4 @@
+'use strict';
 let should = require('should');
 let supertest = require('supertest');
 let seeder = require('./seeder.js');

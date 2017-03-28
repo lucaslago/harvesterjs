@@ -1,5 +1,4 @@
-let _ = require('lodash');
-let should = require('should');
+'use strict';
 let $http = require('http-as-promised');
 
 let seeder = require('./seeder.js');

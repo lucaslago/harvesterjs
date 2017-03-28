@@ -1,5 +1,5 @@
+'use strict';
 let _ = require('lodash');
-let inflect = require('i')();
 let request = require('supertest');
 let Promise = require('bluebird');
 
@@ -28,7 +28,6 @@ module.exports = function(harvesterInstance, baseUrl) {
           body[key] = value;
           request(baseUrl).post('/' + key).send(body).expect('Content-Type', /json/).expect(201).end(function(error, response) {
               if (error) {
-                  console.error(response ? response.text : error);
                   reject(error);
                   return;
                 }
@@ -44,7 +43,7 @@ module.exports = function(harvesterInstance, baseUrl) {
     }
 
   function drop(collectionName) {
-      return new Promise(function(resolve, reject) {
+      return new Promise(function(resolve) {
           var collection = harvesterInstance.adapter.db.collections[collectionName];
           if (collection) {
               collection.drop(function() {

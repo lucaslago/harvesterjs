@@ -1,3 +1,4 @@
+'use strict';
 let Promise = require('bluebird');
 let request = require('supertest');
 let Joi = require('joi');

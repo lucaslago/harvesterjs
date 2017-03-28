@@ -1,3 +1,4 @@
+'use strict';
 let _ = require('lodash');
 let fs = require('fs');
 let path = require('path');

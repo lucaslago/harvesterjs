@@ -1,3 +1,5 @@
+'use strict';
+// eslint-disable-next-line
 let harvester = require('../lib/harvester');
 
 let dockerHostURL = process.env.DOCKER_HOST;

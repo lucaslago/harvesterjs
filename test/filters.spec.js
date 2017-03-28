@@ -1,3 +1,4 @@
+'use strict';
 let _ = require('lodash');
 let should = require('should');
 let request = require('supertest');
@@ -130,7 +131,7 @@ describe('filters', function() {
               },
             ];
           request(config.baseUrl).patch('/people/' + ids.people[0]).set('content-type',
-                    'application/json').send(JSON.stringify(upd)).expect(200).end(function(err, res) {
+                    'application/json').send(JSON.stringify(upd)).expect(200).end(function(err) {
                       should.not.exist(err);
                       resolve();
                     });
@@ -149,7 +150,7 @@ describe('filters', function() {
                       },
                     ];
                   request(config.baseUrl).patch('/people/' + ids.people[1]).set('content-type',
-                            'application/json').send(JSON.stringify(upd)).expect(200).end(function(err, res) {
+                            'application/json').send(JSON.stringify(upd)).expect(200).end(function(err) {
                               should.not.exist(err);
                               resolve();
                             });

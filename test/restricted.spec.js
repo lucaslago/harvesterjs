@@ -1,8 +1,6 @@
+'use strict';
 let should = require('should');
 let supertest = require('supertest');
-let Joi = require('joi');
-let harvester = require('../lib/harvester');
-let seeder = require('./seeder.js');
 
 describe('Restricted', function() {
 
@@ -21,7 +19,6 @@ describe('Restricted', function() {
       supertest(config.baseUrl).post('/restricts').send(data)
             .expect('Content-Type', /json/).expect(405)
             .end(function(error) {
-              console.log(error);
               should.not.exist(error);
               done();
             });

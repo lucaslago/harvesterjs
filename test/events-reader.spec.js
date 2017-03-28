@@ -1,3 +1,4 @@
+'use strict';
 let _ = require('lodash');
 let Promise = require('bluebird');
 let BSON = require('mongodb').BSONPure;
@@ -21,7 +22,7 @@ chai.request.addPromises(Promise);
 let $http = require('http-as-promised');
 
 $http.debug = true;
-$http.request = require('request-debug')($http.request);
+//$http.request = require('request-debug')($http.request);
 
 let debug = require('debug')('events-reader-test');
 
@@ -106,7 +107,7 @@ describe('onChange callback, event capture and at-least-once delivery semantics'
                             })
                             // then catch handlers below are added to be able to assert results
                             // this is not common for production code
-                            .spread(function (response, reports) {
+                            .spread(function (response) {
                                 createReportResponseDfd.resolve(response);
                             });
                     } 
@@ -233,7 +234,7 @@ describe('onChange callback, event capture and at-least-once delivery semantics'
                       done(err);
                     });
 
-              that.checkpointCreated.then(function(checkpoint) {
+              that.checkpointCreated.then(function() {
                   that.eventsReader.tail();
                 });
 

@@ -1,3 +1,4 @@
+'use strict';
 let _ = require('lodash');
 let expect = require('chai').expect;
 let supertest = require('supertest');

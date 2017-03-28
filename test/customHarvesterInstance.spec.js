@@ -1,3 +1,4 @@
+'use strict';
 let request = require('supertest');
 let should = require('should');
 let Joi = require('joi');

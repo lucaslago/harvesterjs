@@ -1,3 +1,4 @@
+'use strict';
 let should = require('should');
 let Joi = require('joi');
 
@@ -5,9 +6,7 @@ let seeder = require('./seeder.js');
 
 describe('chaining', function() {
 
-  var config;
   beforeEach(function() {
-      config = this.config;
       return seeder(this.harvesterApp).dropCollectionsAndSeed('people', 'pets');
     });
 

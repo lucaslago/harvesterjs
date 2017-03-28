@@ -1,3 +1,4 @@
+'use strict';
 let request = require('supertest');
 let harvester = require('../lib/harvester');
 let baseUrl = 'http://localhost:' + 8020;
@@ -15,13 +16,11 @@ describe('EventSource implementation for multiple resources', function() {
   var harvesterApp;
   describe('Server Sent Events', function() {
       this.timeout(20000);
-      var lastEventId;
 
       var sendAndCheckSSE = function(resources, payloads, done) {
           var index = 0;
           var eventSource = ess(baseUrl + '/changes/stream?resources=' + resources.join(','), {retry: false})
-            .on('data', function(res, id) {
-              lastEventId = res.id;
+            .on('data', function(res) {
               var data = JSON.parse(res.data);
               var expectedEventName = resources[index] + 's_i';
                 // ignore ticker data

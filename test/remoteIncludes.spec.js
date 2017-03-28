@@ -1,6 +1,6 @@
+'use strict';
 let Joi = require('joi');
 let $http = require('http-as-promised');
-let should = require('should');
 let _ = require('lodash');
 let Promise = require('bluebird');
 let request = require('supertest');

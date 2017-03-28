@@ -1,3 +1,4 @@
+'use strict';
 let harvesterPort = process.env.HARVESTER_PORT || 8000;
 
 module.exports = {

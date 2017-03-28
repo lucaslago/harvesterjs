@@ -1,3 +1,4 @@
+'use strict';
 let should = require('should');
 let _ = require('lodash');
 let Promise = require('bluebird');
