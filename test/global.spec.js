@@ -1,3 +1,3 @@
-var app = require('./app.js');
+let app = require('./app.js');
 
 before(app);

@@ -1,7 +1,7 @@
-module.exports = (function () {
-    return [
-        {
-            "foo": "bert"
-        }
-    ];
-}());
+module.exports = (function() {
+  return [
+    {
+      'foo': 'bert',
+    },
+  ];
+})();

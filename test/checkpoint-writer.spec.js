@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 const expect = require('chai').expect;
 const Joi = require('joi');
 const sinon = require('sinon');

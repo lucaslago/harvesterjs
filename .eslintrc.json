@@ -1,0 +1,21 @@
+{
+	"plugins": ["node"],
+	"extends": ["eslint:recommended", "plugin:node/recommended"],
+	"rules": {
+		"node/exports-style": ["error", "module.exports"],
+		"semi": 2,
+		"node/no-unpublished-require": ["error", {
+			"allowModules": ["supertest", "should", "chai", "chai-http", "agco-event-source-stream", "before"],
+			"tryExtensions": [".js", ".json", ".node"]
+		}]
+	},
+	"globals": {
+		"describe": true,
+		"before": true,
+		"it": true,
+		"expect": true,
+		"beforeEach": true,
+		"supertest": true,
+		"chai": true
+	}
+}

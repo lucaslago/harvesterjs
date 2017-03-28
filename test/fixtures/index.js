@@ -1,12 +1,12 @@
-var _ = require('lodash');
-var fs = require('fs');
-var path = require('path');
+let _ = require('lodash');
+let fs = require('fs');
+let path = require('path');
 
 function FixturesSync() {
-  var fixtureList = fs.readdirSync(path.join(__dirname, './')).filter(function (item) {
-    return 'index.js' !== item;
+  let fixtureList = fs.readdirSync(path.join(__dirname, './')).filter(function(item) {
+    return item !== 'index.js';
   });
-  var fixtures;
+  let fixtures;
 
   if (!fixtures) {
     fixtures = {};
@@ -17,8 +17,8 @@ function FixturesSync() {
   return fixtures;
 }
 
-var standardFixture = FixturesSync();
+let standardFixture = FixturesSync();
 
-module.exports = function () {
+module.exports = function() {
   return _.cloneDeep(standardFixture);
 };
