@@ -13,30 +13,36 @@ describe("includes", function () {
     function setupLinks(_ids) {
         ids = _ids;
 
-        function link(url, path, value) {
+        function link(resource, resourceId, link, linkId) {
+          const url = `/${resource}/${resourceId}`;
+
             return new Promise(function (resolve) {
-                var data = [
-                    {
-                        op: 'replace',
-                        path: path,
-                        value: value
+              var data = {
+                [resource]: [
+                  {
+                    links: {
+                      [link]: linkId
                     }
-                ];
-                request(config.baseUrl).patch(url).set('Content-Type', 'application/json').send(JSON.stringify(data)).end(function (err) {
+                  }
+                ]
+              };
+                request(config.baseUrl).put(url).set('Content-Type', 'application/json').send(JSON.stringify(data)).end(function (err, res) {
+
+                    (res.statusCode).should.be.equal(200);
                     should.not.exist(err);
                     setTimeout(resolve, 100);//sometimes tests fail if resolve is called immediately, probably mongo has problems indexing concurrently
                 });
             });
         }
 
-        return Promise.all([
-            link('/people/' + ids.people[0], '/people/0/soulmate', ids.people[1]), //TODO: harvester should take care about this on its own
-            link('/people/' + ids.people[1], '/people/0/soulmate', ids.people[0]),
-            link('/people/' + ids.people[0], '/people/0/lovers', [ids.people[1]]),
-            link('/pets/' + ids.pets[0], '/pets/0/owner', [ids.people[0]]),
-            link('/pets/' + ids.pets[0], '/pets/0/food', [ids.foobars[0]]),
-            link('/collars/' + ids.collars[0], '/collars/0/collarOwner', [ids.pets[0]])
-        ])
+      return Promise.all([
+        link('people', ids.people[0], 'soulmate', ids.people[1]),
+        link('people', ids.people[1], 'soulmate', ids.people[0]),
+        link('people', ids.people[0], 'lovers', [ids.people[1]]),
+        link('pets', ids.pets[0], 'owner', ids.people[0]),
+        link('pets', ids.pets[0], 'food', ids.foobars[0]),
+        link('collars', ids.collars[0], 'collarOwner', ids.pets[0])
+      ]);
     }
 
     beforeEach(function () {

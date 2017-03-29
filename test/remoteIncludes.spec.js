@@ -116,10 +116,10 @@ describe('remote link', function () {
                     that.commentId = body.comments[0].id;
                     return $http({
                         uri: app1BaseUrl + '/posts/' + that.postId,
-                        method: 'PATCH',
-                        json: [{op: 'replace', path: 'posts/0/links/comments', value: [that.commentId]}]
+                        method: 'PUT',
+                        json: {posts: [{links: {comments: [that.commentId]}}]}
                     });
-                });
+                })
         });
 
         describe('fetch posts and include author', function () {
