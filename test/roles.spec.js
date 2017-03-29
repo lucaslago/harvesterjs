@@ -1,13 +1,13 @@
 'use strict';
-let Promise = require('bluebird');
-let request = require('supertest');
-let Joi = require('joi');
+var Promise = require('bluebird');
+var request = require('supertest');
+var Joi = require('joi');
 
-let harvester = require('../lib/harvester');
-let seeder = require('./seeder.js');
-let config = require('./config.js');
+var harvester = require('../lib/harvester');
+var seeder = require('./seeder.js');
+var config = require('./config.js');
 
-describe('Roles', function() {
+describe('Roles', function () {
 
   var harvesterInstance;
   var harvesterPort = 8008;
@@ -20,21 +20,21 @@ describe('Roles', function() {
   var petId = '33333333-3333-3333-3333-333333333333';
   var authorizationStrategy;
 
-  before(function() {
+  before(function () {
     harvesterInstance = harvester(config.harvester.options);
     var resourceSchema = {name: Joi.string()};
     harvesterInstance.resource('person', resourceSchema).roles('Admin');
     harvesterInstance.resource('pets', resourceSchema);
     harvesterInstance.resource('user', resourceSchema).roles('Admin', 'SuperAdmin');
     harvesterInstance.resource('user').getById().roles('Moderator');
-    harvesterInstance.setAuthorizationStrategy(function() {
+    harvesterInstance.setAuthorizationStrategy(function () {
       return authorizationStrategy.apply(this, arguments);
     });
     harvesterInstance.listen(harvesterPort);
 
-        /**
-         * We need separate instance that does not have roles authorization, so that we can seed freely.
-         */
+		/**
+		 * We need separate instance that does not have roles authorization, so that we can seed freely.
+		 */
     var seedingHarvesterInstance = harvester(config.harvester.options);
     seedingHarvesterInstance.resource('person', resourceSchema);
     seedingHarvesterInstance.resource('pets', resourceSchema);
@@ -42,493 +42,373 @@ describe('Roles', function() {
     seedingHarvesterInstance.listen(harvesterSeedPort);
     this.seedingHarvesterInstance = seedingHarvesterInstance;
   });
-  beforeEach(function() {
+  beforeEach(function () {
     var seederInstance = seeder(this.seedingHarvesterInstance, seedingBaseUrl);
-    return seederInstance.dropCollections('people', 'pets', 'users').then(function() {
+    return seederInstance.dropCollections('people', 'pets', 'users').then(function () {
       return seederInstance.seedCustomFixture({people: [
-                {id: personId, name: 'Jack'},
+				{id: personId, name: 'Jack'}
       ], users: [
-                {id: userId, name: 'Jill'},
+				{id: userId, name: 'Jill'}
       ], pets: [
-                {id: petId, name: 'JillDog'},
+				{id: petId, name: 'JillDog'}
       ]});
     });
   });
 
-  describe('having specific config, exportRoles', function() {
-    it('should return proper roles descriptor', function() {
+  describe('having specific config, exportRoles', function () {
+    it('should return proper roles descriptor', function () {
       var expectedDescriptor = {
-        Admin: ['person.get', 'person.post', 'person.getById', 'person.putById', 'person.deleteById', 'person.patchById',
-          'person.getChangeEventsStreaming', 'user.get', 'user.post', 'user.putById', 'user.deleteById', 'user.patchById',
+        Admin: ['person.get', 'person.post', 'person.getById', 'person.putById', 'person.deleteById',
+          'person.getChangeEventsStreaming', 'user.get', 'user.post', 'user.putById', 'user.deleteById',
           'user.getChangeEventsStreaming'],
-        SuperAdmin: ['user.get', 'user.post', 'user.putById', 'user.deleteById', 'user.patchById', 'user.getChangeEventsStreaming'],
-        Moderator: ['user.getById'],
+        SuperAdmin: ['user.get', 'user.post', 'user.putById', 'user.deleteById', 'user.getChangeEventsStreaming'],
+        Moderator: ['user.getById']
       };
       harvesterInstance.exportRoles().should.eql(expectedDescriptor);
     });
   });
 
-  describe('being authed as Admin', function() {
-    beforeEach(function() {
+  describe('being authed as Admin', function () {
+    beforeEach(function () {
       authorizationStrategy = function (request, permission, rolesAllowed) {
         if (rolesAllowed.length === 0 || -1 < rolesAllowed.indexOf(('Admin'))) {
           return Promise.resolve();
-        } 
-        return Promise.reject();
-                
+        } else {
+          return Promise.reject();
+        }
       };
     });
-    it('should be allowed to get people', function(done) {
+    it('should be allowed to get people', function (done) {
       request(baseUrl)
-                .get('/people')
-                .expect(200)
-                .end(done);
+				.get('/people')
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to post person', function(done) {
+    it('should be allowed to post person', function (done) {
       request(baseUrl)
-                .post('/people')
-                .send({people: [
-                    {name: 'Steve'},
-                ]})
-                .expect(201)
-                .end(done);
+				.post('/people')
+				.send({people: [
+					{name: 'Steve'}
+]})
+				.expect(201)
+				.end(done);
     });
-    it('should be allowed to get person by id', function(done) {
+    it('should be allowed to get person by id', function (done) {
       request(baseUrl)
-                .get('/people/' + personId)
-                .expect(200)
-                .end(done);
+				.get('/people/' + personId)
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to put person by id', function(done) {
+    it('should be allowed to put person by id', function (done) {
       request(baseUrl)
-                .put('/people/' + personId)
-                .send({people: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(200)
-                .end(done);
+				.put('/people/' + personId)
+				.send({people: [
+					{name: 'Joseph'}
+]})
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to patch person by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/people/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/people/' + personId)
-                .send(patch)
-                .expect(200)
-                .end(done);
-    });
-    it.skip('should be allowed to getChangeEventsStreaming for person', function() {
+    it.skip('should be allowed to getChangeEventsStreaming for person', function () {
       throw new Error('Not implemented yet');
     });
 
-    it('should be allowed to get users', function(done) {
+
+    it('should be allowed to get users', function (done) {
       request(baseUrl)
-                .get('/users')
-                .expect(200)
-                .end(done);
+				.get('/users')
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to post user', function(done) {
+    it('should be allowed to post user', function (done) {
       request(baseUrl)
-                .post('/users')
-                .send({users: [
-                    {name: 'Steve'},
-                ]})
-                .expect(201)
-                .end(done);
+				.post('/users')
+				.send({users: [
+					{name: 'Steve'}
+]})
+				.expect(201)
+				.end(done);
     });
-    it('should NOT be allowed to get user by id', function(done) {
+    it('should NOT be allowed to get user by id', function (done) {
       request(baseUrl)
-                .get('/users/' + userId)
-                .expect(403)
-                .end(done);
+				.get('/users/' + userId)
+				.expect(403)
+				.end(done);
     });
-    it('should be allowed to put user by id', function(done) {
+    it('should be allowed to put user by id', function (done) {
       request(baseUrl)
-                .put('/users/' + userId)
-                .send({users: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(200)
-                .end(done);
+				.put('/users/' + userId)
+				.send({users: [
+					{name: 'Joseph'}
+]})
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to patch user by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/users/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/users/' + userId)
-                .send(patch)
-                .expect(200)
-                .end(done);
-    });
-    it.skip('should be allowed to getChangeEventsStreaming for user', function() {
+    it.skip('should be allowed to getChangeEventsStreaming for user', function () {
       throw new Error('Not implemented yet');
     });
 
-    it('should be allowed to get pets', function(done) {
+
+    it('should be allowed to get pets', function (done) {
       request(baseUrl)
-                .get('/pets')
-                .expect(200)
-                .end(done);
+				.get('/pets')
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to post pet', function(done) {
+    it('should be allowed to post pet', function (done) {
       request(baseUrl)
-                .post('/pets')
-                .send({pets: [
-                    {name: 'Steve'},
-                ]})
-                .expect(201)
-                .end(done);
+				.post('/pets')
+				.send({pets: [
+					{name: 'Steve'}
+]})
+				.expect(201)
+				.end(done);
     });
-    it('should be allowed to get pet by id', function(done) {
+    it('should be allowed to get pet by id', function (done) {
       request(baseUrl)
-                .get('/pets/' + petId)
-                .expect(200)
-                .end(done);
+				.get('/pets/' + petId)
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to put pet by id', function(done) {
+    it('should be allowed to put pet by id', function (done) {
       request(baseUrl)
-                .put('/pets/' + petId)
-                .send({pets: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(200)
-                .end(done);
+				.put('/pets/' + petId)
+				.send({pets: [
+					{name: 'Joseph'}
+]})
+				.expect(200).
+				end(done);
     });
-    it('should be allowed to patch pet by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/pets/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/pets/' + petId)
-                .send(patch)
-                .expect(200)
-                .end(done);
-    });
-    it.skip('should be allowed to getChangeEventsStreaming for pet', function() {
+    it.skip('should be allowed to getChangeEventsStreaming for pet', function () {
       throw new Error('Not implemented yet');
     });
   });
 
-  describe('being authed as SuperAdmin', function() {
-    beforeEach(function() {
+  describe('being authed as SuperAdmin', function () {
+    beforeEach(function () {
       authorizationStrategy = function (request, permission, rolesAllowed) {
         if (rolesAllowed.length === 0 || -1 < rolesAllowed.indexOf(('SuperAdmin'))) {
           return Promise.resolve();
-        } 
-        return Promise.reject();
-                
+        } else {
+          return Promise.reject();
+        }
       };
     });
-    it('should NOT be allowed to get people', function(done) {
+    it('should NOT be allowed to get people', function (done) {
       request(baseUrl)
-                .get('/people')
-                .expect(403)
-                .end(done);
+				.get('/people')
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to post person', function(done) {
+    it('should NOT be allowed to post person', function (done) {
       request(baseUrl)
-                .post('/people')
-                .send({people: [
-                    {name: 'Steve'},
-                ]})
-                .expect(403)
-                .end(done);
+				.post('/people')
+				.send({people: [
+					{name: 'Steve'}
+]})
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to get person by id', function(done) {
+    it('should NOT be allowed to get person by id', function (done) {
       request(baseUrl)
-                .get('/people/' + personId)
-                .expect(403)
-                .end(done);
+				.get('/people/' + personId)
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to put person by id', function(done) {
+    it('should NOT be allowed to put person by id', function (done) {
       request(baseUrl)
-                .put('/people/' + personId)
-                .send({people: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(403)
-                .end(done);
+				.put('/people/' + personId)
+				.send({people: [
+					{name: 'Joseph'}
+]})
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to patch person by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/people/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/people/' + personId)
-                .send(patch)
-                .expect(403)
-                .end(done);
-    });
-    it.skip('should NOT be allowed to getChangeEventsStreaming for person', function() {
+    it.skip('should NOT be allowed to getChangeEventsStreaming for person', function () {
       throw new Error('Not implemented yet');
     });
 
-    it('should be allowed to get users', function(done) {
+
+    it('should be allowed to get users', function (done) {
       request(baseUrl)
-                .get('/users')
-                .expect(200)
-                .end(done);
+				.get('/users')
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to post user', function(done) {
+    it('should be allowed to post user', function (done) {
       request(baseUrl)
-                .post('/users')
-                .send({users: [
-                    {name: 'Steve'},
-                ]})
-                .expect(201)
-                .end(done);
+				.post('/users')
+				.send({users: [
+					{name: 'Steve'}
+]})
+				.expect(201)
+				.end(done);
     });
-    it('should NOT be allowed to get user by id', function(done) {
+    it('should NOT be allowed to get user by id', function (done) {
       request(baseUrl)
-                .get('/users/' + userId)
-                .expect(403)
-                .end(done);
+				.get('/users/' + userId)
+				.expect(403)
+				.end(done);
     });
-    it('should be allowed to put user by id', function(done) {
+    it('should be allowed to put user by id', function (done) {
       request(baseUrl)
-                .put('/users/' + userId)
-                .send({users: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(200)
-                .end(done);
+				.put('/users/' + userId)
+				.send({users: [
+					{name: 'Joseph'}
+]})
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to patch user by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/users/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/users/' + userId)
-                .send(patch)
-                .expect(200)
-                .end(done);
-    });
-    it.skip('should be allowed to getChangeEventsStreaming for user', function() {
+    it.skip('should be allowed to getChangeEventsStreaming for user', function () {
       throw new Error('Not implemented yet');
     });
 
-    it('should be allowed to get pets', function(done) {
+
+    it('should be allowed to get pets', function (done) {
       request(baseUrl)
-                .get('/pets')
-                .expect(200)
-                .end(done);
+				.get('/pets')
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to post pet', function(done) {
+    it('should be allowed to post pet', function (done) {
       request(baseUrl)
-                .post('/pets')
-                .send({pets: [
-                    {name: 'Steve'},
-                ]})
-                .expect(201)
-                .end(done);
+				.post('/pets')
+				.send({pets: [
+					{name: 'Steve'}
+]})
+				.expect(201)
+				.end(done);
     });
-    it('should be allowed to get pet by id', function(done) {
+    it('should be allowed to get pet by id', function (done) {
       request(baseUrl)
-                .get('/pets/' + petId)
-                .expect(200)
-                .end(done);
+				.get('/pets/' + petId)
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to put pet by id', function(done) {
+    it('should be allowed to put pet by id', function (done) {
       request(baseUrl)
-                .put('/pets/' + petId)
-                .send({pets: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(200)
-                .end(done);
+				.put('/pets/' + petId)
+				.send({pets: [
+					{name: 'Joseph'}
+]})
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to patch pet by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/pets/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/pets/' + petId)
-                .send(patch)
-                .expect(200)
-                .end(done);
-    });
-    it.skip('should be allowed to getChangeEventsStreaming for pet', function() {
+    it.skip('should be allowed to getChangeEventsStreaming for pet', function () {
       throw new Error('Not implemented yet');
     });
   });
 
-  describe('being authed as Moderator', function() {
-    beforeEach(function() {
+  describe('being authed as Moderator', function () {
+    beforeEach(function () {
       authorizationStrategy = function (request, permission, rolesAllowed) {
         if (rolesAllowed.length === 0 || -1 < rolesAllowed.indexOf(('Moderator'))) {
           return Promise.resolve();
-        } 
-        return Promise.reject();
-                
+        } else {
+          return Promise.reject();
+        }
       };
     });
-    it('should NOT be allowed to get people', function(done) {
+    it('should NOT be allowed to get people', function (done) {
       request(baseUrl)
-                .get('/people')
-                .expect(403)
-                .end(done);
+				.get('/people')
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to post person', function(done) {
+    it('should NOT be allowed to post person', function (done) {
       request(baseUrl)
-                .post('/people')
-                .send({people: [
-                    {name: 'Steve'},
-                ]})
-                .expect(403)
-                .end(done);
+				.post('/people')
+				.send({people: [
+					{name: 'Steve'}
+]})
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to get person by id', function(done) {
+    it('should NOT be allowed to get person by id', function (done) {
       request(baseUrl)
-                .get('/people/' + personId)
-                .expect(403)
-                .end(done);
+				.get('/people/' + personId)
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to put person by id', function(done) {
+    it('should NOT be allowed to put person by id', function (done) {
       request(baseUrl)
-                .put('/people/' + personId)
-                .send({people: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(403)
-                .end(done);
+				.put('/people/' + personId)
+				.send({people: [
+					{name: 'Joseph'}
+]})
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to patch person by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/people/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/people/' + personId)
-                .send(patch)
-                .expect(403)
-                .end(done);
-    });
-    it.skip('should NOT be allowed to getChangeEventsStreaming for person', function() {
+    it.skip('should NOT be allowed to getChangeEventsStreaming for person', function () {
       throw new Error('Not implemented yet');
     });
 
-    it('should NOT be allowed to get users', function(done) {
+
+    it('should NOT be allowed to get users', function (done) {
       request(baseUrl)
-                .get('/users')
-                .expect(403)
-                .end(done);
+				.get('/users')
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to post user', function(done) {
+    it('should NOT be allowed to post user', function (done) {
       request(baseUrl)
-                .post('/users')
-                .send({users: [
-                    {name: 'Steve'},
-                ]})
-                .expect(403)
-                .end(done);
+				.post('/users')
+				.send({users: [
+					{name: 'Steve'}
+]})
+				.expect(403)
+				.end(done);
     });
-    it('should be allowed to get user by id', function(done) {
+    it('should be allowed to get user by id', function (done) {
       request(baseUrl)
-                .get('/users/' + userId)
-                .expect(200)
-                .end(done);
+				.get('/users/' + userId)
+				.expect(200)
+				.end(done);
     });
-    it('should NOT be allowed to put user by id', function(done) {
+    it('should NOT be allowed to put user by id', function (done) {
       request(baseUrl)
-                .put('/users/' + userId)
-                .send({users: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(403)
-                .end(done);
+				.put('/users/' + userId)
+				.send({users: [
+					{name: 'Joseph'}
+]})
+				.expect(403)
+				.end(done);
     });
-    it('should NOT be allowed to patch user by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/users/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/users/' + userId)
-                .send(patch)
-                .expect(403)
-                .end(done);
-    });
-    it.skip('should NOT be allowed to getChangeEventsStreaming for user', function() {
+    it.skip('should NOT be allowed to getChangeEventsStreaming for user', function () {
       throw new Error('Not implemented yet');
     });
 
-    it('should be allowed to get pets', function(done) {
+
+    it('should be allowed to get pets', function (done) {
       request(baseUrl)
-                .get('/pets')
-                .expect(200)
-                .end(done);
+				.get('/pets')
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to post pet', function(done) {
+    it('should be allowed to post pet', function (done) {
       request(baseUrl)
-                .post('/pets')
-                .send({pets: [
-                    {name: 'Steve'},
-                ]})
-                .expect(201)
-                .end(done);
+				.post('/pets')
+				.send({pets: [
+					{name: 'Steve'}
+]})
+				.expect(201)
+				.end(done);
     });
-    it('should be allowed to get pet by id', function(done) {
+    it('should be allowed to get pet by id', function (done) {
       request(baseUrl)
-                .get('/pets/' + petId)
-                .expect(200)
-                .end(done);
+				.get('/pets/' + petId)
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to put pet by id', function(done) {
+    it('should be allowed to put pet by id', function (done) {
       request(baseUrl)
-                .put('/pets/' + petId)
-                .send({pets: [
-                    {name: 'Joseph'},
-                ]})
-                .expect(200)
-                .end(done);
+				.put('/pets/' + petId)
+				.send({pets: [
+					{name: 'Joseph'}
+]})
+				.expect(200)
+				.end(done);
     });
-    it('should be allowed to patch pet by id', function(done) {
-      var patch = [
-        {
-          op: 'replace',
-          path: '/pets/0/name',
-          value: 'Josephine',
-        },
-      ];
-      request(baseUrl)
-                .patch('/pets/' + petId)
-                .send(patch)
-                .expect(200)
-                .end(done);
-    });
-    it.skip('should be allowed to getChangeEventsStreaming for pet', function() {
+    it.skip('should be allowed to getChangeEventsStreaming for pet', function () {
       throw new Error('Not implemented yet');
     });
   });

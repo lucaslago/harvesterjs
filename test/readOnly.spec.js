@@ -72,19 +72,4 @@ describe('ReadOnly', function() {
       done();
     });
   });
-
-  it('should NOT be possible to patchById', function(done) {
-    var data = [
-      {
-        op: 'replace',
-        path: '/readers/0/name',
-        value: 'Baba Jaga',
-      },
-    ];
-    supertest(config.baseUrl).patch('/readers/' + ids.readers[0]).send(data).expect('Content-Type', /json/).expect(405).end(function(error) {
-      should.not.exist(error);
-      done();
-    });
-  });
-
 });

@@ -60,18 +60,4 @@ describe('Immutable', function() {
     });
   });
 
-  it('should NOT be possible to patchById', function(done) {
-    var data = [
-      {
-        op: 'replace',
-        path: '/immutables/0/name',
-        value: 'Baba Jaga',
-      },
-    ];
-    supertest(config.baseUrl).patch('/immutables/' + ids.immutables[0]).send(data).expect('Content-Type', /json/).expect(405).end(function(error) {
-      should.not.exist(error);
-      done();
-    });
-  });
-
 });
