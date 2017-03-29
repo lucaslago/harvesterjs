@@ -1,6 +1,5 @@
-'use strict'
+'use strict';
 const expect = require('chai').expect;
-const Joi = require('joi');
 const sinon = require('sinon');
 const checkpointWriter = require('../lib/events-reader-checkpoint-writer');
 const Promise = require('bluebird');

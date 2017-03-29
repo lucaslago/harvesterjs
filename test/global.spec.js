@@ -1,3 +1,4 @@
-var app = require('./app.js');
+'use strict';
+let app = require('./app.js');
 
 before(app);
