@@ -25,11 +25,12 @@
   },
   "main": "./lib/harvester.js",
   "dependencies": {
+    "agco-logger": "git+https://github.com/agco/agco-logger.git#c14fba9712968a0509bbf2c69c33a167a6cc1b07",
     "bluebird": "^2.9.27",
-    "body-parser": "~1.4.3",
+    "body-parser": "^1.17.1",
     "debounce-promise": "^3.0.1",
     "debug": "^2.1.1",
-    "express": "~4.6.1",
+    "express": "^4.15.2",
     "highland": "^2.5.1",
     "http-as-promised": "^1.1.0",
     "i": "~0.3.2",
@@ -43,8 +44,7 @@
     "node-uuid": "^1.4.3",
     "throttle-function": "^0.1.0",
     "tiny-sse": "git+https://github.com/agco/node-tiny-sse.git",
-    "underscore.string": "^2.4.0",
-    "agco-logger": "git+https://github.com/agco/agco-logger.git#c14fba9712968a0509bbf2c69c33a167a6cc1b07"
+    "underscore.string": "^2.4.0"
   },
   "devDependencies": {
     "agco-event-source-stream": "^1.1.1",
