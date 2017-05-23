@@ -28,7 +28,7 @@ describe('EventSource implementation for resource changes', function() {
       };
 
             /**
-             * dvd resource  should be declared after book, to test if it does not overwrite book sse config
+             * dvd resource  should be declared after book, to test if it does not overwrite book sse confir
              */
       harvesterApp = harvester(options).resource('book', {
         title: Joi.string(),

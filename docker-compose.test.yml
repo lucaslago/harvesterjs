@@ -10,8 +10,8 @@ services:
       - MONGODB_URL=mongodb://db:27017/test
       - OPLOG_MONGODB_URL=mongodb://db:27017/local
   db:
-    image: mongo:2.4.14
-    command: mongod --replSet rs0 --oplogSize 20 --noprealloc  --smallfiles --nojournal
+    image: mongo:3.4.0
+    command: mongod --replSet rs0 --oplogSize 20 --smallfiles --nojournal
   initReplicaset:
-    image: mongo:2.4.14
-    command: bash -c "sleep 3 && mongo admin --host db:27017 --eval 'printjson(rs.initiate());'"
+    image: mongo:3.4.0
+    command: bash -c "sleep 10 && mongo admin --host db:27017 --eval 'printjson(rs.initiate());'"
